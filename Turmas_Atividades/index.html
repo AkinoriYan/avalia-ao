@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Turmas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+        nav {
+            background-color: #444;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+        }
+        .container {
+            padding: 20px;
+        }
+        .turma, .atividade {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #444;
+        }
+        .hidden {
+            display: none;
+        }
+        .link:hover {
+            color: lightcoral;
+        }
+        .data-display {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Sistema de Gestão de Turmas</h1>
+</header>
+
+<div class="container" id="login-container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <div class="form-group">
+            <label for="username">Email:</label>
+            <input type="email" id="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Senha:</label>
+            <input type="password" id="password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Entrar</button> <br> <br>
+            <button type="button" onclick="toggleRegister()">Cadastrar Usuário</button>
+            <button type="button" onclick="showData()">Visualizar Dados</button>
+        </div>
+    </form>
+</div>
+
+<div class="container hidden" id="register-container">
+    <h2>Cadastrar Usuário</h2>
+    <form id="register-form">
+        <div class="form-group">
+            <label for="new-username">Email:</label>
+            <input type="email" id="new-username" required>
+        </div>
+        <div class="form-group">
+            <label for="new-password">Senha:</label>
+            <input type="password" id="new-password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Cadastrar</button> <br> <br>
+            <button type="button" onclick="toggleLogin()">Voltar ao Login</button>
+        </div>
+    </form>
+</div>
+
+<nav class="hidden" id="main-nav">
+    <div>
+        <a href="#" onclick="showSection('listar-turmas')">Visualizar Turmas</a>
+        <a href="#" onclick="showSection('registrar-turma')">Registrar Turmas</a>
+        <a href="#" onclick="showSection('registrar-atividade')">Registrar Atividades</a>
+        <a href="#" onclick="showSection('listar-atividades')">Visualizar Atividades</a>
+    </div>
+    <div>
+        <a href="/" class="link" id="logout">Sair</a>
+    </div>
+</nav>
+
+<div class="container hidden" id="home">
+    <h2>Bem-vindo, Professor!</h2>
+    <p>Selecione uma opção no menu para gerenciar suas turmas e atividades.</p>
+</div>
+
+<div class="container hidden" id="listar-turmas">
+    <h2>Minhas Turmas</h2>
+    <div id="turmas-list"></div>
+</div>
+
+<div class="container hidden" id="registrar-turma">
+    <h2>Registrar Nova Turma</h2>
+    <form id="turma-form">
+        <div class="form-group">
+            <label for="nome-turma">Nome da Turma:</label>
+            <input type="text" id="nome-turma" name="nome-turma" placeholder="Ex: Matemática - 9º Ano" required>
+        </div>
+        <div class="form-group">
+            <label for="descricao-turma">Descrição:</label>
+            <textarea id="descricao-turma" name="descricao-turma" placeholder="Descreva a turma..." required></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit">Registrar Turma</button>
+        </div>
+    </form>
+</div>
+
+<div class="container hidden" id="registrar-atividade">
+    <h2>Registrar Atividade</h2>
+    <form id="atividade-form">
+        <div class="form-group">
+            <label for="turma-selecionada">Selecionar Turma:</label>
+            <select id="turma-selecionada" name="turma-selecionada" required>
+                <option value="">Escolha uma turma</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="titulo-atividade">Título da Atividade:</label>
+            <input type="text" id="titulo-atividade" name="titulo-atividade" required>
+        </div>
+        <div class="form-group">
+            <label for="descricao-atividade">Descrição:</label>
+            <textarea id="descricao-atividade" name="descricao-atividade" required></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit">Registrar Atividade</button>
+        </div>
+    </form>
+</div>
+
+<div class="container hidden" id="listar-atividades">
+    <h2>Atividades Registradas</h2>
+    <div id="atividades-list"></div>
+</div>
+
+<div class="container hidden" id="data-display">
+    <h2>Dados do Local Storage</h2>
+    <div class="data-display" id="data-content"></div>
+    <button onclick="hideData()">Fechar</button>
+</div>
+
+<script>
+    function initUser() {
+        const user = { username: 'professor', password: 'senha123' };
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    function toggleRegister() {
+        document.getElementById('login-container').classList.add('hidden');
+        document.getElementById('register-container').classList.remove('hidden');
+    }
+
+    function toggleLogin() {
+        document.getElementById('register-container').classList.add('hidden');
+        document.getElementById('login-container').classList.remove('hidden');
+    }
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.container').forEach(section => {
+            section.classList.add('hidden');
+        });
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const user = users.find(user => user.username === username && user.password === password);
+
+        if (user) {
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('main-nav').classList.remove('hidden');
+            document.getElementById('home').classList.remove('hidden');
+            showSection('home');
+            loadTurmas();
+            loadAtividades();
+        } else {
+            alert('Usuário ou senha incorretos.');
+        }
+    });
+
+    document.getElementById('register-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const newUsername = document.getElementById('new-username').value;
+        const newPassword = document.getElementById('new-password').value;
+
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const existingUser = users.find(user => user.username === newUsername);
+
+        if (existingUser) {
+            alert('Usuário já cadastrado. Escolha outro nome de usuário.');
+        } else {
+            users.push({ username: newUsername, password: newPassword });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Usuário cadastrado com sucesso!');
+            toggleLogin();
+        }
+    });
+
+    function loadTurmas() {
+        const turmasList = document.getElementById('turmas-list');
+        const turmaSelect = document.getElementById('turma-selecionada');
+        turmasList.innerHTML = '';
+        turmaSelect.innerHTML = '<option value="">Escolha uma turma</option>';
+
+        const turmas = JSON.parse(localStorage.getItem('turmas')) || [];
+        turmas.forEach((turma, index) => {
+            const turmaDiv = document.createElement('div');
+            turmaDiv.className = 'turma';
+            turmaDiv.innerHTML = `
+                <h3>${turma.nome}</h3>
+                <p>Descrição: ${turma.descricao}</p>
+                <button onclick="confirmDeleteTurma(${index})">Excluir</button>
+            `;
+            turmasList.appendChild(turmaDiv);
+
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = turma.nome;
+            turmaSelect.appendChild(option);
+        });
+    }
+
+    document.getElementById('turma-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const nomeTurma = document.getElementById('nome-turma').value;
+        const descricaoTurma = document.getElementById('descricao-turma').value;
+
+        const turmas = JSON.parse(localStorage.getItem('turmas')) || [];
+        turmas.push({ nome: nomeTurma, descricao: descricaoTurma });
+        localStorage.setItem('turmas', JSON.stringify(turmas));
+
+        this.reset();
+        loadTurmas();
+    });
+
+    function confirmDeleteTurma(index) {
+        if (confirm(`Tem certeza que deseja excluir esta turma?`)) {
+            const turmas = JSON.parse(localStorage.getItem('turmas')) || [];
+            turmas.splice(index, 1);
+            localStorage.setItem('turmas', JSON.stringify(turmas));
+            loadTurmas();
+        }
+    }
+
+    function loadAtividades() {
+        const atividadesList = document.getElementById('atividades-list');
+        atividadesList.innerHTML = '';
+        const atividades = JSON.parse(localStorage.getItem('atividades')) || [];
+        
+        atividades.forEach((atividade, index) => {
+            const atividadeDiv = document.createElement('div');
+            atividadeDiv.className = 'atividade';
+            atividadeDiv.innerHTML = `
+                <h4>${atividade.titulo}</h4>
+                <p>Descrição: ${atividade.descricao}</p>
+                <p>Turma: ${atividade.turma}</p>
+                <button onclick="confirmDeleteAtividade(${index})">Excluir</button>
+            `;
+            atividadesList.appendChild(atividadeDiv);
+        });
+    }
+
+    document.getElementById('atividade-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const tituloAtividade = document.getElementById('titulo-atividade').value;
+        const descricaoAtividade = document.getElementById('descricao-atividade').value;
+        const turmaSelecionada = document.getElementById('turma-selecionada').value;
+
+        const atividades = JSON.parse(localStorage.getItem('atividades')) || [];
+        const turmas = JSON.parse(localStorage.getItem('turmas')) || [];
+        
+        atividades.push({ 
+            titulo: tituloAtividade, 
+            descricao: descricaoAtividade, 
+            turma: turmas[turmaSelecionada].nome 
+        });
+        localStorage.setItem('atividades', JSON.stringify(atividades));
+
+        this.reset();
+        loadAtividades();
+    });
+
+    function confirmDeleteAtividade(index) {
+        if (confirm(`Tem certeza que deseja excluir esta atividade?`)) {
+            const atividades = JSON.parse(localStorage.getItem('atividades')) || [];
+            atividades.splice(index, 1);
+            localStorage.setItem('atividades', JSON.stringify(atividades));
+            loadAtividades();
+        }
+    }
+
+    function showData() {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const turmas = JSON.parse(localStorage.getItem('turmas')) || [];
+        const atividades = JSON.parse(localStorage.getItem('atividades')) || [];
+
+        let dataContent = `
+            <h3>Usuários:</h3>
+            <pre>${JSON.stringify(users, null, 2)}</pre>
+            <h3>Turmas:</h3>
+            <pre>${JSON.stringify(turmas, null, 2)}</pre>
+            <h3>Atividades:</h3>
+            <pre>${JSON.stringify(atividades, null, 2)}</pre>
+        `;
+        document.getElementById('data-content').innerHTML = dataContent;
+        document.getElementById('data-display').classList.remove('hidden');
+    }
+
+    function hideData() {
+        document.getElementById('data-display').classList.add('hidden');
+    }
+
+    if (!localStorage.getItem('users')) {
+        initUser();
+    }
+</script>
+
+</body>
+</html>
